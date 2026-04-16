@@ -32,7 +32,7 @@ rule apollo-deprecated-insecure-rpc-client {
   enabled true
   priority 80
   severity warning
-  ASK write
+  LOG write
   IF path GLOB "**/*.(cpp|h|py|go)" AND content CONTAINS "apollo::network::LegacyRPCClient"
   MESSAGE "Usage of `apollo::network::LegacyRPCClient` is deprecated and insecure. This client uses unencrypted HTTP and `apollo::serialization::InsecureProtoV1`, which lacks authentication, integrity, and confidentiality. Migrate to `apollo::network::SecureGRPCClient` with `apollo::serialization::SecureProtoV2` for encrypted, authenticated, and integrity-protected communication."
 }
@@ -41,7 +41,7 @@ rule apollo-insecure-debug-logging-default {
   enabled true
   priority 75
   severity warning
-  ASK write
+  LOG write
   IF path GLOB "**/*.(cpp|h|py|go)" AND content CONTAINS "apollo::logging::initLogger(" AND content CONTAINS ", true)"
   MESSAGE "Explicitly enabling debug output (`true`) in `apollo::logging::initLogger()` in production-like code can lead to sensitive information disclosure. Debug logs often contain internal state, user data, or stack traces that should not be exposed. Ensure debug output is disabled in production environments or controlled via secure configuration. Consider using `apollo::logging::initProductionLogger()` for hardened defaults."
 }
@@ -50,7 +50,7 @@ rule apollo-style-guide-no-raw-new-delete {
   enabled true
   priority 60
   severity warning
-  ASK write
+  LOG write
   IF path GLOB "**/*.(cpp|h)" AND (content CONTAINS " new " OR content CONTAINS " delete ") AND NOT content CONTAINS "apollo::memory::ManagedBuffer" AND NOT content CONTAINS "std::unique_ptr" AND NOT content CONTAINS "std::shared_ptr"
   MESSAGE "Violation of Google apollo C++ Style Guide: Avoid raw `new` and `delete` for general object management. This practice is error-prone and can lead to memory leaks or corruption. Prefer using `std::unique_ptr`, `std::shared_ptr`, or `apollo::memory::ManagedBuffer` for automatic resource management. Raw `new`/`delete` should only be used in specific, carefully audited memory management components."
 }
